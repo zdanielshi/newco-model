@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from utils.model_functions import logistic_function, calculate_actives
 from utils.active_rates import active_rate_scenarios
-from utils.sidebar import sidebar
+from utils.text_content import sidebar, help_texts, explainer, customer_model_explainer, pl_model_explainer
 
 # Universal settings
 st.set_page_config(
@@ -19,10 +19,11 @@ with st.sidebar:
 
 # Title of the app
 st.title("Simple NewCo Model")
-st.write("Explainer text goes here")
+st.markdown(explainer)
 
 with st.container(border = True):
-    "**_Customer Model Assumptions_**"
+    "_**Customer Model Assumptions**_"
+    st.markdown(customer_model_explainer)
     default_cap_pop = 100000
     default_init_pop = 5
     default_growth_rate = 0.1
@@ -124,6 +125,7 @@ with st.container(border = True):
 
 with st.container(border=True):
     "_**P&L Model Assumptions**_"
+    st.markdown(pl_model_explainer)
     default_arpu = 100
     default_gross_margin = 75
     default_cac = 100
@@ -152,8 +154,16 @@ with st.container(border=True):
     hc_assumptions.columns = ['Headcount']
 
     # Display the transposed DataFrame using Streamlit's data editor
-    default_pl_assumptions = st.data_editor(pl_assumptions)
-    default_hc_assumptions = st.data_editor(hc_assumptions.T)
+    default_pl_assumptions = st.data_editor(
+        pl_assumptions,
+        hide_index=True,
+        use_container_width=True
+    )
+    default_hc_assumptions = st.data_editor(
+        hc_assumptions.T,
+        hide_index=False,
+        use_container_width=True
+    )
 
     #Modifying the assumptions to the be used in the P&L model
     model_arpu = default_pl_assumptions['Monthly ARPU'].iloc[0]
@@ -197,8 +207,18 @@ with st.container(border=True):
     pl_model_annual['Revenue Growth Rate'] = pl_model_annual['Revenue'].pct_change()
     pl_model_annual['Operating Margin'] = pl_model_annual['Operating Profit'] / pl_model_annual['Revenue']  
 
-st.metric(label = "Payback",value = f'{payback_period} months')
-st.write(pl_model_annual.T)
+# Display the DataFrame using Streamlit's dataframe
+col1, col2 = st.columns([2,1])
+
+with col1:
+    st.dataframe(pl_model_annual.T, use_container_width=True, on_select='ignore', height = 500)
+
+with col2:
+    st.metric(label = "Payback", value = f"{payback_period} Months")
+    st.line_chart(pl_model_annual[['Revenue', 'Operating Profit']])
+
+# st.metric(label = "Payback",value = f'{payback_period} months')
+# st.write(pl_model_annual.T)
 
 # st.write(transposed_customers.head())
 # st.write(transposed_customers.tail())
