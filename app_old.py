@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from utils.model_functions import calculate_customers, calculate_active_customers
 from utils.active_rates import active_rate_scenarios
-from utils.sidebar import sidebar
+from utils.text_content import sidebar
 
 # Universal settings
 st.set_page_config(
