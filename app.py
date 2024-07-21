@@ -207,15 +207,24 @@ with st.container(border=True):
     pl_model_annual['Revenue Growth Rate'] = pl_model_annual['Revenue'].pct_change()
     pl_model_annual['Operating Margin'] = pl_model_annual['Operating Profit'] / pl_model_annual['Revenue']  
 
+# Divider between assumptions and output
+
+st.divider()
+
 # Display the DataFrame using Streamlit's dataframe
 col1, col2 = st.columns([2,1])
 
 with col1:
-    st.dataframe(pl_model_annual.T, use_container_width=True, on_select='ignore', height = 500)
+    st.markdown("## P&L Model")
+    st.dataframe(pl_model_annual.T, use_container_width=True, on_select='ignore', height = 800)
 
 with col2:
     st.metric(label = "Payback", value = f"{payback_period} Months")
-    st.line_chart(pl_model_annual[['Revenue', 'Operating Profit']])
+    with st.container(border = True):
+        st.markdown('#### Revenue and Operating Profit')
+        st.line_chart(pl_model_annual[['Revenue', 'Operating Profit']])
+        st.markdown('#### Customers')
+        st.line_chart(pl_model_annual[['New Customers', 'Active Customers']])
 
 # st.metric(label = "Payback",value = f'{payback_period} months')
 # st.write(pl_model_annual.T)
